@@ -1,0 +1,5 @@
+node_modules/
+pgdata18/
+.env
+.DS_Store
+uploads/

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 160" fill="none">
+  <defs>
+    <linearGradient id="brandGrad" x1="0" y1="0" x2="400" y2="160" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <radialGradient id="orb" cx="340" cy="80" r="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#1e3a8a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="160" rx="16" fill="url(#brandGrad)"/>
+  <circle cx="340" cy="80" r="120" fill="url(#orb)"/>
+
+  <!-- Icon area -->
+  <rect x="24" y="32" width="52" height="52" rx="12" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+  <!-- Camera icon -->
+  <rect x="32" y="44" width="36" height="28" rx="4" fill="none" stroke="white" stroke-width="2.5"/>
+  <circle cx="50" cy="58" r="8" fill="none" stroke="white" stroke-width="2.5"/>
+  <circle cx="50" cy="58" r="3.5" fill="white"/>
+  <rect x="58" y="40" width="10" height="8" rx="2" fill="white" opacity="0.8"/>
+
+  <!-- Brand text -->
+  <text x="90" y="56" fill="white" font-size="26" font-weight="900" font-family="'Inter',sans-serif" letter-spacing="-0.5">CivicEye</text>
+  <text x="90" y="80" fill="#93c5fd" font-size="26" font-weight="900" font-family="'Inter',sans-serif" letter-spacing="-0.5">AI</text>
+  <text x="90" y="100" fill="rgba(255,255,255,0.6)" font-size="11" font-weight="600" font-family="'Inter',sans-serif" letter-spacing="1.5">AI-POWERED CIVIC ISSUE REPORTING</text>
+
+  <!-- Workflow pills -->
+  <rect x="24" y="108" width="64" height="26" rx="13" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+  <text x="56" y="125" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="11" font-weight="700" font-family="sans-serif">📷 Capture</text>
+
+  <rect x="98" y="108" width="56" height="26" rx="13" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+  <text x="126" y="125" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="11" font-weight="700" font-family="sans-serif">🧠 Detect</text>
+
+  <rect x="164" y="108" width="50" height="26" rx="13" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+  <text x="189" y="125" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="11" font-weight="700" font-family="sans-serif">🚀 Route</text>
+
+  <rect x="224" y="108" width="50" height="26" rx="13" fill="rgba(99,102,241,0.3)" stroke="rgba(99,102,241,0.5)" stroke-width="1"/>
+  <text x="249" y="125" text-anchor="middle" fill="#c7d2fe" font-size="11" font-weight="700" font-family="sans-serif">✅ Resolve</text>
+
+  <!-- Decorative nodes -->
+  <circle cx="310" cy="40" r="20" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+  <circle cx="350" cy="70" r="28" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <circle cx="375" cy="120" r="16" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+  <circle cx="320" cy="120" r="10" fill="rgba(99,102,241,0.2)"/>
+  <circle cx="350" cy="110" r="6" fill="rgba(99,102,241,0.3)"/>
+</svg>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AquaGuard AI — Citizen Registration for Water Pollution Reporting."/>
+  <title>AquaGuard AI — Citizen Registration</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 20% 30%, rgba(2, 132, 199, 0.25) 0%, transparent 60%),
+                  radial-gradient(circle at 80% 80%, rgba(13, 148, 136, 0.2) 0%, transparent 50%),
+                  linear-gradient(135deg, #030d1e 0%, #081d3d 50%, #03142d 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+
+    .signup-card {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 24px;
+      padding: 36px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.7);
+    }
+
+    .signup-card h2 { margin: 0 0 8px 0; font-size: 24px; font-weight: 800; color: white; }
+    .signup-card p { margin: 0 0 24px 0; font-size: 13px; color: #94a3b8; }
+    
+    .form-label { color: #e2e8f0; font-size: 13px; margin-bottom: 6px; display: block; font-weight: 600; }
+    .form-input {
+      width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.2);
+      color: white; padding: 12px 14px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;
+      box-sizing: border-box; transition: 0.2s;
+    }
+    .form-input:focus { border-color: #38bdf8; outline: none; background: rgba(255,255,255,0.1); }
+    
+    .btn-primary {
+      width: 100%; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: white; border: none; padding: 14px;
+      border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s;
+      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
+    }
+    .btn-primary:hover { background: linear-gradient(135deg, #0369a1 0%, #075985 100%); }
+  </style>
+</head>
+<body>
+
+<div class="signup-card">
+  <h2>Citizen Registration</h2>
+  <p>Create an account to report drinking water quality and sewage incidents</p>
+  <form id="signupForm">
+    <label class="form-label">Full Name</label>
+    <input id="fullName" type="text" class="form-input" placeholder="e.g. Kishore Sundar" required />
+
+    <label class="form-label">Email address</label>
+    <input id="email" type="email" class="form-input" placeholder="citizen@example.com" required />
+    
+    <label class="form-label">Contact Phone (Optional)</label>
+    <input id="phone" type="tel" class="form-input" placeholder="+91 98765-43210" />
+
+    <label class="form-label">Password</label>
+    <input id="password" type="password" class="form-input" placeholder="Create a password" required />
+    
+    <button type="submit" class="btn-primary">Register Citizen Account</button>
+  </form>
+  <div style="margin-top: 18px; text-align: center;">
+    <a href="index.html" style="color: #38bdf8; text-decoration: none; font-size: 13px; font-weight: 500;">Already registered? Sign In</a>
+  </div>
+</div>
+
+<script>
+  document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    btn.textContent = 'Creating account...';
+    btn.disabled = true;
+    try {
+      const resp = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: document.getElementById('fullName').value.trim(),
+          email: document.getElementById('email').value.trim(),
+          phone: document.getElementById('phone').value.trim(),
+          password: document.getElementById('password').value.trim()
+        })
+      });
+      const data = await resp.json();
+      if (data.success) {
+        localStorage.setItem('civiceye-role', 'CITIZEN');
+        localStorage.setItem('civiceye-user', JSON.stringify(data.user));
+        window.location.href = 'citizen.html';
+      } else {
+        alert(data.error || 'Signup failed');
+        btn.textContent = 'Register Citizen Account';
+        btn.disabled = false;
+      }
+    } catch (err) {
+      alert('Signup failed. Please try again.');
+      btn.textContent = 'Register Citizen Account';
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" fill="none">
+  <!-- Background -->
+  <rect width="400" height="200" rx="16" fill="#0f172a"/>
+  <!-- Road surface -->
+  <rect x="0" y="110" width="400" height="90" rx="0" fill="#1e293b"/>
+  <!-- Road markings -->
+  <rect x="180" y="120" width="40" height="10" rx="2" fill="#334155"/>
+  <rect x="180" y="140" width="40" height="10" rx="2" fill="#334155"/>
+  <rect x="180" y="160" width="40" height="10" rx="2" fill="#334155"/>
+  <!-- Pothole main -->
+  <ellipse cx="200" cy="155" rx="55" ry="30" fill="#0f172a"/>
+  <ellipse cx="200" cy="155" rx="48" ry="25" fill="#0a0f1a"/>
+  <!-- Pothole depth shadows -->
+  <ellipse cx="200" cy="158" rx="40" ry="20" fill="#060a12"/>
+  <!-- Cracking lines -->
+  <path d="M145 128 L175 145 L165 160" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M255 128 L225 143 L235 162" stroke="#475569" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M185 110 L195 138" stroke="#334155" stroke-width="2" stroke-linecap="round"/>
+  <path d="M215 112 L207 140" stroke="#334155" stroke-width="2" stroke-linecap="round"/>
+  <!-- Warning triangle -->
+  <polygon points="200,20 232,72 168,72" fill="#dc2626" opacity="0.9"/>
+  <text x="200" y="60" text-anchor="middle" fill="white" font-size="28" font-weight="900" font-family="sans-serif">!</text>
+  <!-- Label -->
+  <text x="200" y="96" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="800" font-family="sans-serif" letter-spacing="2">POTHOLE DETECTED</text>
+  <!-- Road edges -->
+  <rect x="0" y="108" width="400" height="4" fill="#f59e0b" opacity="0.6"/>
+</svg>

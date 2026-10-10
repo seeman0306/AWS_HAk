@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AquaGuard AI Citizen Portal — Report drinking water contamination, sewage in wells/ponds, and water pollution with AI vision detection and GPS verification."/>
+  <title>AquaGuard AI — Citizen Water Quality Portal</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Leaflet CSS for Interactive Pin Correction -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+</head>
+<body data-page="citizen" data-role="citizen" class="app-layout">
+
+<!-- TOP NAVIGATION -->
+<nav class="topnav">
+  <a href="index.html" class="topnav-brand">
+    <div style="width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg, #0284c7, #0d9488); display:grid; place-items:center; font-size:20px; box-shadow:0 4px 12px rgba(2,132,199,0.3);">💧</div>
+    <div>
+      <div class="topnav-brand-text">AquaGuard AI</div>
+      <div class="topnav-brand-sub">Citizen Water Protection Portal</div>
+    </div>
+  </a>
+  <div class="topnav-sep"></div>
+  <div class="topnav-actions">
+    <div style="display:flex; gap:18px; margin-right:16px; align-items:center; font-size:0.92rem; font-weight:600; color:var(--gray-600);">
+      <a href="#" onclick="switchView('home'); return false;" id="nav-home" style="color:var(--brand-600);">Report Incident</a>
+      <a href="#" onclick="switchView('complaints'); return false;" id="nav-complaints">My Complaints</a>
+      <a href="#" onclick="logout(); return false;" style="color:#ef4444;">Logout</a>
+    </div>
+    <span class="role-badge citizen">👤 Citizen Reporter</span>
+  </div>
+</nav>
+
+<!-- PAGE CONTENT -->
+<div class="page-content">
+
+  <!-- VIEW: HOME (REPORTING WORKSPACE) -->
+  <div id="view-home">
+    
+    <!-- Hero Banner -->
+    <div class="hero-banner" style="background: linear-gradient(135deg, #03142d 0%, #0c4a6e 50%, #0f766e 100%);">
+      <div class="hero-content">
+        <div class="hero-badge" style="background:rgba(56,189,248,0.2); border-color:#38bdf8; color:#7dd3fc;">
+          ⚡ Roboflow Computer Vision Active
+        </div>
+        <h1 class="hero-title">Report Water Contamination</h1>
+        <p class="hero-subtitle">
+          Capture or upload an image of suspected drinking water contamination, sewage entering wells/ponds, or wastewater discharge. AquaGuard AI analyzes visual contamination signatures and routes reports to the designated municipal authority.
+        </p>
+        <div class="hero-tags">
+          <span class="hero-tag">💧 Dirty / Turbid Drinking Water</span>
+          <span class="hero-tag">🚰 Sewage Entering Open Wells</span>
+          <span class="hero-tag">🌿 Sewage in Ponds &amp; Lakes</span>
+          <span class="hero-tag">⚠️ Wastewater Pipe Rupture</span>
+        </div>
+      </div>
+      <div style="display:none;" id="heroImgContainer"></div>
+    </div>
+
+    <div style="max-width: 860px; margin: 0 auto;">
+
+      <!-- STEP 1: Select Suspected Water Issue Category -->
+      <div class="card mb-6">
+        <div class="card-header">
+          <h3>1. Select Suspected Water Incident Category</h3>
+          <span style="font-size:0.8rem; color:var(--gray-500);">Auto-routes to department</span>
+        </div>
+        <div class="card-body">
+          <div class="category-select-grid" id="categorySelectionGrid">
+            
+            <div class="category-card-option active" data-issue="drinking_water_contamination" onclick="selectCategoryCard(this)">
+              <div class="category-icon-title">
+                <span>💧</span> Contaminated Drinking Water
+              </div>
+              <div class="category-desc">Discolored tap water, turbidity, foul smell, sediment in drinking supply.</div>
+              <div class="category-dept-tag">→ Water Supply &amp; Quality Dept</div>
+            </div>
+
+            <div class="category-card-option" data-issue="sewage_in_well" onclick="selectCategoryCard(this)">
+              <div class="category-icon-title">
+                <span>🚰</span> Sewage Entering Well
+              </div>
+              <div class="category-desc">Sewage/drainage water leaking into open well, borewell, or groundwater source.</div>
+              <div class="category-dept-tag" style="color:#b45309;">→ Sanitation &amp; Sewerage Dept</div>
+            </div>
+
+            <div class="category-card-option" data-issue="sewage_in_pond_lake" onclick="selectCategoryCard(this)">
+              <div class="category-icon-title">
+                <span>🌿</span> Sewage Entering Pond / Lake
+              </div>
+              <div class="category-desc">Untreated sewage entering community ponds, temple tanks, urban lakes, or wetlands.</div>
+              <div class="category-dept-tag" style="color:#0f766e;">→ Environment &amp; Water Resources</div>
+            </div>
+
+            <div class="category-card-option" data-issue="sewage_pipe_leakage" onclick="selectCategoryCard(this)">
+              <div class="category-icon-title">
+                <span>⚠️</span> Sewage Pipe Leak / Overflow
+              </div>
+              <div class="category-desc">Ruptured underground sewer main, overflowing manholes, blackwater street puddles.</div>
+              <div class="category-dept-tag" style="color:#b45309;">→ Sanitation &amp; Sewerage Dept</div>
+            </div>
+
+            <div class="category-card-option" data-issue="visible_water_pollution" onclick="selectCategoryCard(this)">
+              <div class="category-icon-title">
+                <span>🏭</span> Visible Wastewater Discharge
+              </div>
+              <div class="category-desc">Industrial effluent, chemical foam, or heavy floating debris in canals or rivers.</div>
+              <div class="category-dept-tag" style="color:#0f766e;">→ Environment &amp; Water Resources</div>
+            </div>
+
+          </div>
+
+          <!-- Description and Water Source details -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:12px;">
+            <div>
+              <label class="form-label">Water Source Type</label>
+              <select id="waterSourceType" class="form-input" style="padding:10px;">
+                <option value="DRINKING_TAP">Municipal Drinking Tap</option>
+                <option value="OPEN_WELL">Community Open Well</option>
+                <option value="BOREWELL">Borewell / Handpump</option>
+                <option value="POND_LAKE">Pond / Lake / Tank</option>
+                <option value="CANAL_RIVER">Canal / Stream / River</option>
+                <option value="DRAINAGE">Underground Sewer Drainage</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Observed Contaminant</label>
+              <select id="suspectedContaminant" class="form-input" style="padding:10px;">
+                <option value="TURBIDITY_ODOR">Turbidity, Brown Color &amp; Odor</option>
+                <option value="SEWAGE">Raw Sewage / Blackwater Infiltration</option>
+                <option value="FLOATING_WASTE">Floating Waste / Plastic Debris</option>
+                <option value="CHEMICAL_DISCHARGE">Industrial Chemical Foam / Sludge</option>
+                <option value="UNKNOWN">Unidentified Contamination</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;">
+            <label class="form-label">Citizen Description / Landmark Details</label>
+            <input type="text" id="citizenDescription" class="form-input" placeholder="e.g. Foul sewage smell from kitchen tap since morning near Temple street." style="margin-bottom:0;" />
+          </div>
+
+        </div>
+      </div>
+
+      <!-- STEP 2: Photograph Capture / Upload -->
+      <div class="card mb-6">
+        <div class="card-header">
+          <h3>2. Capture or Upload Water Incident Image</h3>
+          <span style="font-size:0.8rem; color:var(--gray-500);">Live camera or gallery</span>
+        </div>
+        <div class="card-body">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            
+            <label class="btn-primary" for="cameraInput" style="cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:24px 16px; border-radius:16px; background:linear-gradient(135deg, #0284c7, #0369a1); box-shadow:0 6px 20px rgba(2,132,199,0.3); transition:0.2s;">
+              <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleImageSelection(event)" />
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <div style="text-align:center;">
+                <div style="font-size:1.05rem; font-weight:700;">Take Live Photo</div>
+                <div style="font-size:0.78rem; opacity:0.85; margin-top:3px;">Open device camera</div>
+              </div>
+            </label>
+
+            <label class="btn-secondary" for="galleryInput" style="cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:24px 16px; border-radius:16px; background:white; border:2px dashed #0284c7; color:#0284c7; transition:0.2s;">
+              <input type="file" id="galleryInput" accept="image/*" class="hidden" onchange="handleImageSelection(event)" />
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <div style="text-align:center;">
+                <div style="font-size:1.05rem; font-weight:700;">Upload from Gallery</div>
+                <div style="font-size:0.78rem; opacity:0.8; margin-top:3px;">PNG, JPG, or WEBP</div>
+              </div>
+            </label>
+
+          </div>
+
+          <!-- Quick Test Water Presets -->
+          <div style="margin-top:18px; padding-top:14px; border-top:1px solid var(--gray-200);">
+            <div style="font-size:0.78rem; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">
+              Or test with realistic water contamination samples:
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:8px;">
+              <button type="button" class="preset-chip" onclick="loadSampleImage('assets/sample_drinking_water.jpg', 'drinking_water_contamination', 'Tap Water Turbidity & Sulfur Odor')">
+                💧 Tap Water Discoloration
+              </button>
+              <button type="button" class="preset-chip" onclick="loadSampleImage('assets/sample_well_sewage.jpg', 'sewage_in_well', 'Open Well Sewage Infiltration')">
+                🚰 Sewage in Community Well
+              </button>
+              <button type="button" class="preset-chip" onclick="loadSampleImage('assets/sample_pond_pollution.jpg', 'sewage_in_pond_lake', 'Pond Debris & Wastewater')">
+                🌿 Lake Debris &amp; Sewage
+              </button>
+              <button type="button" class="preset-chip" onclick="loadSampleImage('assets/sample_pipe_leak.jpg', 'sewage_pipe_leakage', 'Roadside Sewer Pipe Burst')">
+                ⚠️ Broken Sewer Pipe Leak
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- STEP 3: GPS Geotagging & Interactive Pin Location Correction -->
+      <div id="locationBox" class="gps-card" data-latitude="9.524500" data-longitude="77.638200">
+        <div class="gps-icon">📍</div>
+        <div class="gps-info">
+          <div class="gps-label">Incident GPS Geotag</div>
+          <div id="locationText" class="gps-coords">Acquiring satellite coordinates...</div>
+          <div id="locationAddress" class="gps-status">Detecting municipal ward...</div>
+        </div>
+        <div>
+          <button id="refreshLocationBtn" class="btn-ghost btn-sm" type="button">🔄 Refresh GPS</button>
+          <button id="enableLocationBtn" class="btn-ghost btn-sm hidden" type="button" style="margin-top:6px;">Allow GPS</button>
+        </div>
+      </div>
+
+      <!-- Interactive Pin Location Correction Map -->
+      <div class="location-picker-card">
+        <div class="picker-header">
+          <div>
+            <strong>🗺️ Incident Location Pin Picker</strong>
+            <div class="picker-hint">Drag pin or click anywhere on the map if GPS requires fine-tuning</div>
+          </div>
+          <div id="pickerCoordsBadge" style="font-family:'JetBrains Mono', monospace; font-size:0.8rem; background:#e0f2fe; color:#0284c7; padding:4px 8px; border-radius:6px; font-weight:600;">
+            9.524500, 77.638200
+          </div>
+        </div>
+        <div id="citizenPickerMap"></div>
+      </div>
+
+      <!-- Image Preview Card -->
+      <div id="previewCard" class="preview-card">
+        <div class="preview-image-area">
+          <img id="previewImage" src="" alt="Water incident preview" />
+          <div id="scanBar" class="ai-scan-bar"></div>
+        </div>
+        <div class="preview-footer">
+          <button type="button" id="chooseAnotherBtn" class="btn-secondary">Choose Another Image</button>
+          <button type="button" id="detectBtn" class="btn-primary" style="background:linear-gradient(135deg, #0284c7, #0d9488);">
+            🤖 Analyze with Roboflow AI
+          </button>
+        </div>
+      </div>
+
+      <!-- AI Detection Result Panel -->
+      <div id="detectionPanel" class="detection-card">
+        
+        <div class="detection-top">
+          <div>
+            <div class="detection-title" id="detectedIssue">Water Contamination Detected</div>
+            <div style="font-size:0.82rem; color:var(--gray-500); margin-top:2px;" id="detectedModelInfo">
+              Model: Roboflow water-pollution-6ekuv-iqw6f/1 &bull; Pre-built Computer Vision
+            </div>
+          </div>
+          <span id="detectedSeverity" class="badge badge-high">HIGH</span>
+        </div>
+
+        <div class="conf-row">
+          <span>Roboflow Vision Confidence</span>
+          <span id="detectedConfidence">89%</span>
+        </div>
+        <div class="conf-bar">
+          <div id="detectedConfidenceBar" class="conf-fill" style="width:89%; background:linear-gradient(90deg, #0284c7, #10b981);"></div>
+        </div>
+
+        <!-- Scientific Observation Disclaimer -->
+        <div class="disclaimer-banner">
+          <div class="disclaimer-icon">⚠️</div>
+          <div>
+            <div class="disclaimer-title">Visual Observation Telemetry (Scientific Notice)</div>
+            <div id="scientificDisclaimerText">
+              Analysis represents optical computer vision assessment of surface contamination, discoloration, or floating pollutants. Visual AI cannot verify microscopic bacterial pathogens (E. coli) or dissolved heavy metals. Municipal lab water quality testing is dispatched automatically.
+            </div>
+          </div>
+        </div>
+
+        <!-- Automated Smart Routing Banner -->
+        <div class="dept-assign-banner" style="background:#f0f9ff; border:1.5px solid #bae6fd;">
+          <div>
+            <div class="dept-assign-label" style="color:#0284c7;">Proposed Municipal Dispatch Department</div>
+            <div id="detectedDepartment" class="dept-assign-name" style="color:#0369a1;">Water Supply &amp; Quality Department</div>
+          </div>
+          <span class="auto-tag" style="background:#0284c7; color:white;">SMART ROUTED</span>
+        </div>
+
+        <!-- Telemetry Bounding Boxes & Classes -->
+        <div style="margin: 14px 0 6px 0;">
+          <div style="font-size:0.78rem; font-weight:700; color:var(--gray-600); margin-bottom:6px; text-transform:uppercase;">
+            Detected Visual Classes &amp; Objects:
+          </div>
+          <div id="detectedObjectsList">
+            <span class="telemetry-chip">🔍 Class: floating waste</span>
+            <span class="telemetry-chip">📊 Verified Objects: 1</span>
+          </div>
+        </div>
+
+        <!-- Category Correction & Review Option -->
+        <div class="issue-override-box">
+          <label style="font-size:0.84rem; font-weight:700; color:var(--gray-700);">
+            Confirm or Correct Issue Category (Human Review):
+          </label>
+          <select id="issueOverrideSelect" onchange="handleCategoryOverrideChange(this.value)">
+            <option value="drinking_water_contamination">💧 Suspected Contaminated Drinking Water → Water Supply Dept</option>
+            <option value="sewage_in_well">🚰 Sewage Entering Well / Groundwater → Sanitation Dept</option>
+            <option value="sewage_in_pond_lake">🌿 Sewage Entering Pond / Lake → Environment Board</option>
+            <option value="sewage_pipe_leakage">⚠️ Sewage Pipe Leakage / Burst → Sanitation Dept</option>
+            <option value="visible_water_pollution">🏭 Visible Wastewater / Effluent → Environment Board</option>
+          </select>
+        </div>
+
+        <div class="detection-grid" style="margin-top:16px;">
+          <div class="detection-metric">
+            <div class="detection-metric-label">GPS Coordinates</div>
+            <div id="detectedLocation" class="detection-metric-value mono" style="font-size:0.85rem;">9.524500, 77.638200</div>
+          </div>
+          <div class="detection-metric" id="detectedCustomTelemetry">
+            <div class="detection-metric-label">Inference Status</div>
+            <div class="detection-metric-value" style="color:#059669;">Verified via Roboflow Cloud</div>
+          </div>
+        </div>
+
+        <button type="button" id="submitComplaintBtn" class="btn-primary w-full" style="font-size:1.05rem; padding:15px; margin-top:16px; background:linear-gradient(135deg, #0284c7, #0d9488); border:none;">
+          ✅ Confirm &amp; Submit Water Complaint to Department
+        </button>
+
+      </div>
+
+      <!-- STEP 4: Submission Success Banner -->
+      <div id="submissionSuccessCard" class="success-banner" style="background:#f0fdf4; border-color:#86efac;">
+        <div class="success-header">
+          <div class="success-check" style="background:#16a34a;">✓</div>
+          <div>
+            <div style="font-size:1.2rem; font-weight:800; color:#15803d;">Complaint Registered Successfully!</div>
+            <div style="font-size:0.88rem; color:#166534; margin-top:2px;">
+              Saved in PostgreSQL database &bull; Dispatched to assigned municipal officer queue.
+            </div>
+          </div>
+        </div>
+        
+        <div class="detection-grid" style="border-top:1px solid rgba(134,239,172,0.4); padding-top:14px; margin-top:0;">
+          <div class="detection-metric" style="background:rgba(255,255,255,0.85);">
+            <div class="detection-metric-label">Complaint ID</div>
+            <div id="successComplaintId" class="detection-metric-value mono" style="color:#0284c7; font-weight:800;">AQG-00001</div>
+          </div>
+          <div class="detection-metric" style="background:rgba(255,255,255,0.85);">
+            <div class="detection-metric-label">Assigned Department</div>
+            <div id="successDepartment" class="detection-metric-value">Water Supply &amp; Quality Dept</div>
+          </div>
+          <div class="detection-metric" style="background:rgba(255,255,255,0.85);">
+            <div class="detection-metric-label">Reported Issue</div>
+            <div id="successIssue" class="detection-metric-value">Contaminated Drinking Water</div>
+          </div>
+          <div class="detection-metric" style="background:rgba(255,255,255,0.85);">
+            <div class="detection-metric-label">Lifecycle Status</div>
+            <div class="detection-metric-value"><span class="badge badge-new">NEW (PENDING OFFICER REVIEW)</span></div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:12px; margin-top:14px;">
+          <button type="button" class="btn-primary" onclick="switchView('complaints')" style="padding:10px 18px; font-size:0.9rem; background:#16a34a;">
+            📋 Track My Complaints
+          </button>
+          <button type="button" class="btn-secondary" onclick="resetFormForNewReport()" style="padding:10px 18px; font-size:0.9rem;">
+            ➕ Report Another Issue
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /view-home -->
+
+  <!-- VIEW: COMPLAINTS (CITIZEN AUDIT LIST) -->
+  <div id="view-complaints" style="display:none; max-width:960px; margin:0 auto;">
+    <div class="card" id="myComplaintsSection">
+      <div class="card-header">
+        <div>
+          <h3>📋 My Water Contamination Complaints</h3>
+          <div style="font-size:0.8rem; color:var(--gray-500); margin-top:2px;">
+            Synchronized directly with PostgreSQL database records
+          </div>
+        </div>
+        <button class="btn-ghost btn-sm" onclick="renderCitizenComplaints()">🔄 Refresh History</button>
+      </div>
+      <div class="card-body">
+        <div id="userComplaintList" class="complaint-list">
+          <div class="empty-state">
+            <div class="empty-icon">💧</div>
+            <div class="empty-msg">Loading complaints from database...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /view-complaints -->
+
+</div><!-- /page-content -->
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="database.js"></script>
+<script src="script.js"></script>
+
+<script>
+  function switchView(viewId) {
+    document.getElementById('view-home').style.display = viewId === 'home' ? 'block' : 'none';
+    document.getElementById('view-complaints').style.display = viewId === 'complaints' ? 'block' : 'none';
+    
+    document.getElementById('nav-home').style.color = viewId === 'home' ? 'var(--brand-600)' : 'inherit';
+    document.getElementById('nav-complaints').style.color = viewId === 'complaints' ? 'var(--brand-600)' : 'inherit';
+
+    if (viewId === 'complaints') {
+      renderCitizenComplaints();
+    }
+  }
+
+  function resetFormForNewReport() {
+    document.getElementById('submissionSuccessCard').classList.remove('show');
+    document.getElementById('previewCard').classList.remove('show');
+    document.getElementById('detectionPanel').classList.remove('show');
+    document.getElementById('citizenDescription').value = '';
+    window._selectedImageData = null;
+    window._selectedImageBlob = null;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

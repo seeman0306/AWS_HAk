@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AquaGuard AI — Water Supply &amp; Quality Department</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+</head>
+<body data-page="water" data-role="water" class="app-layout">
+
+<nav class="topnav">
+  <a href="index.html" class="topnav-brand">
+    <div style="width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg, #0284c7, #0d9488); display:grid; place-items:center; font-size:20px;">💧</div>
+    <div>
+      <div class="topnav-brand-text">AquaGuard AI</div>
+      <div class="topnav-brand-sub">Water Supply &amp; Quality Console</div>
+    </div>
+  </a>
+  <div class="topnav-sep"></div>
+  <div class="topnav-actions">
+    <div style="display:flex; gap:18px; margin-right:16px; align-items:center; font-size:0.92rem; font-weight:600; color:var(--gray-600);">
+      <a href="admin.html" style="color:var(--gray-600);">Admin Center</a>
+      <a href="#" onclick="logout(); return false;" style="color:#ef4444;">Logout</a>
+    </div>
+    <span class="role-badge water">🚰 Water Supply Officer</span>
+  </div>
+</nav>
+
+<div class="page-content">
+
+  <!-- Department Header -->
+  <div class="card mb-6">
+    <div class="card-body" style="padding:28px 28px 24px;">
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:24px; flex-wrap:wrap;">
+        <div>
+          <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#0284c7; margin-bottom:4px;">
+            Municipal Drinking Water Authority
+          </div>
+          <h1 id="officerTitle" style="font-size:1.8rem; font-weight:900; color:var(--gray-900); letter-spacing:-0.02em;">
+            🚰 Water Supply &amp; Quality Department
+          </h1>
+          <p style="color:var(--gray-500); font-size:0.88rem; margin-top:4px;">
+            Assigned Incidents: Contaminated drinking water, tap discoloration, odor, turbidity, pipeline supply quality.
+          </p>
+        </div>
+        <span class="badge badge-water" style="font-size:0.82rem;">SMART-ROUTED QUEUE</span>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-blue">
+          <div class="kpi-icon">💧</div>
+          <div class="kpi-label">Total Assigned</div>
+          <div id="totalCount" class="kpi-value">0</div>
+        </div>
+        <div class="kpi-card kpi-blue">
+          <div class="kpi-icon">🆕</div>
+          <div class="kpi-label">New Reports</div>
+          <div id="newCount" class="kpi-value" style="color:#0284c7;">0</div>
+        </div>
+        <div class="kpi-card kpi-amber">
+          <div class="kpi-icon">⚡</div>
+          <div class="kpi-label">In Testing / Progress</div>
+          <div id="progressCount" class="kpi-value" style="color:var(--warning);">0</div>
+        </div>
+        <div class="kpi-card kpi-green">
+          <div class="kpi-icon">✓</div>
+          <div class="kpi-label">Tested &amp; Resolved</div>
+          <div id="resolvedCount" class="kpi-value" style="color:var(--success);">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Complaints Queue -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h3>🚰 Water Quality Incident Queue</h3>
+        <span style="font-size:0.8rem; color:var(--gray-500);">Live PostgreSQL dispatch stream &bull; Department-authorized access</span>
+      </div>
+      <button class="btn-ghost btn-sm" onclick="window._officerRefreshFn && window._officerRefreshFn()">🔄 Refresh Queue</button>
+    </div>
+    <div class="card-body">
+      <div id="officerComplaintList">
+        <div class="empty-state">
+          <div class="empty-icon">💧</div>
+          <div class="empty-msg">Loading assigned incidents...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="database.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
